@@ -1,4 +1,4 @@
-<h1 style="align:center;color:red;font-familly:sans-serif;">Requirement : Driving License Management System</h1>
+<h1 style="text-align:center;color:red;font-familly:sans-serif;">Requirement : Driving License Management System</h1>
 <p style="font-style:italic;">The tasks of the Driver Licensing Department vary from country to another, but in general, these departments include a set of common and basic tasks to organize and manage the process of granting driving licenses and ensuring the provision of safe drivers on the roads.
 These are the requirements of the first system in a simplified form, a general list of some simplified requirements for the services that the system will provide:</p>
 
