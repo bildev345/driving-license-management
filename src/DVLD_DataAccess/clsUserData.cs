@@ -264,47 +264,38 @@ namespace DVLD_DataAccess
 
         public static DataTable GetAllUsers()
         {
-
             DataTable dt = new DataTable();
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = @"SELECT  Users.UserID, Users.PersonID,
-                            FullName = People.FirstName + ' ' + People.LastName,
-                             Users.UserName, Users.IsActive
-                             FROM  Users INNER JOIN
-                                    People ON Users.PersonID = People.PersonID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
             try
             {
-                connection.Open();
-
-                SqlDataReader reader = command.ExecuteReader();
-
-                if (reader.HasRows)
-
+                using(SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
                 {
-                    dt.Load(reader);
+                    connection.Open();
+
+                    string query = @"SELECT  Users.UserID, Users.PersonID,
+                            FullName = People.FirstName + ' ' + People.LastName,
+                            Users.UserName, Users.IsActive FROM  Users JOIN
+                            People ON Users.PersonID = People.PersonID";
+
+                    using(SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using(SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                dt.Load(reader);
+                            }
+                        }
+                    }
+
                 }
-
-                reader.Close();
-
-
             }
-
-            catch (Exception ex)
+            catch(SqlException e)
             {
-                // Console.WriteLine("Error: " + ex.Message);
+                //
             }
-            finally
-            {
-                connection.Close();
-            }
-
             return dt;
-
         }
+            
 
         public static bool DeleteUser(int UserID)
         {
@@ -482,31 +473,25 @@ namespace DVLD_DataAccess
         {
 
             int rowsAffected = 0;
-            SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString);
-
-            string query = @"Update  Users  
-                            set Password = @Password
-                            where UserID = @UserID";
-
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("@UserID", UserID);
-
             try
             {
-                connection.Open();
-                rowsAffected = command.ExecuteNonQuery();
+                using(SqlConnection connection = new SqlConnection(clsDataAccessSettings.ConnectionString))
+                {
+                    connection.Open();
+                    string query = @"Update Users  
+                            set Password = @Password
+                            where UserID = @UserID";
+                    using(SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@UseID", UserID);
+                        rowsAffected = command.ExecuteNonQuery();
+                    }
 
-            }
-            catch (Exception ex)
-            {
-                //Console.WriteLine("Error: " + ex.Message);
-                return false;
-            }
+                }
 
-            finally
+            }catch(SqlException e)
             {
-                connection.Close();
+                //
             }
 
             return (rowsAffected > 0);
